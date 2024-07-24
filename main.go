@@ -12,7 +12,7 @@ import (
 func main() {
 	r := gin.Default()
 
-	_, err := services.ConnectServiceMongo(lib.UriMongo, lib.DatabaseName)
+	_, err := services.ConnectServiceMongo(lib.UriMongo)
 	if err != nil {
 		fmt.Println("Connection Mongo error: ", err.Error())
 	}
