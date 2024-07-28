@@ -10,4 +10,9 @@ func SetupRoute(r *gin.Engine) {
 	r.GET("/ping", func(c *gin.Context) {
 		c.JSON(http.StatusAccepted, gin.H{"message": "Pong"})
 	})
+
+	users := r.Group("user")
+	{
+		users.GET("/:id")
+	}
 }
