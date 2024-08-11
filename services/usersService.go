@@ -9,14 +9,17 @@ import (
 	"library.net/module/models"
 )
 
-func GetUser(id string) (models.User, error) {
-	user := models.User{}
-
+func UserDatabaseConnect() (*DB, error) {
 	db, err := ConnectServiceMongo(lib.UriMongo)
 	if err != nil {
 		fmt.Println("Error Connect: ", err.Error())
-		return user, err
+		return nil, err
 	}
+	return db, nil
+}
+
+func (db *DB) GetUser(id string) (models.User, error) {
+	user := models.User{}
 
 	collection := db.Client.Database(lib.DatabaseName).Collection("user")
 
