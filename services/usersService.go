@@ -21,7 +21,7 @@ func UserDatabaseConnect() (*DB, error) {
 func (db *DB) GetUser(id string) (*models.User, error) {
 	user := models.User{}
 
-	//prova git
+	//prova gitgit
 
 	collection := db.Client.Database(lib.DatabaseName).Collection("user")
 
