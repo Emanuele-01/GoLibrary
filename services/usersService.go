@@ -21,6 +21,8 @@ func UserDatabaseConnect() (*DB, error) {
 func (db *DB) GetUser(id string) (*models.User, error) {
 	user := models.User{}
 
+	//prova git
+
 	collection := db.Client.Database(lib.DatabaseName).Collection("user")
 
 	filter := bson.D{{Key: "_id", Value: id}}
