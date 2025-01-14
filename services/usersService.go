@@ -3,48 +3,55 @@ package services
 import (
 	"context"
 	"fmt"
+	"log"
 
 	"go.mongodb.org/mongo-driver/bson"
-	"library.net/module/lib"
+	"go.mongodb.org/mongo-driver/bson/primitive"
+	"library.net/module/config"
 	"library.net/module/models"
 )
 
-func UserDatabaseConnect() (*DB, error) {
-	db, err := ConnectServiceMongo(lib.UriMongo)
-	if err != nil {
-		fmt.Println("Error Connect: ", err.Error())
-		return nil, err
-	}
-	return db, nil
+type UserService struct {
+	conn *config.DATABASE
 }
 
-func (db *DB) GetUser(id string) (*models.User, error) {
+func NewUsrService(connDB *config.DATABASE) *UserService {
+	return &UserService{conn: connDB}
+}
+
+// The `func (db *DB) GetUser(id string) (*models.User, error) {` function is a method defined on the
+// `DB` struct. It is used to retrieve a single user from the database based on the provided `id`.
+func (db *UserService) GetUser(id string) (*models.User, error) {
+
 	user := models.User{}
+	collection := db.conn.GetCollection("")
 
-	//prova gitgit
+	idUser, err := primitive.ObjectIDFromHex(id)
+	if err != nil {
+		log.Println("Error parse ObjectID: ", err.Error())
+		return nil, err
+	}
 
-	collection := db.Client.Database(lib.DatabaseName).Collection("user")
-
-	filter := bson.D{{Key: "_id", Value: id}}
+	filter := bson.D{{Key: "_id", Value: idUser}}
 
 	cur, err := collection.Find(context.TODO(), filter)
 	if err != nil {
-		fmt.Println("Error Find: ", err.Error())
+		log.Println("Error Find: ", err.Error())
 		return nil, err
 	}
 
 	if err := cur.All(context.TODO(), &user); err != nil {
-		fmt.Println("Error Decode: ", err.Error())
+		log.Println("Error Decode: ", err.Error())
 		return nil, err
 	}
 
 	return &user, nil
 }
 
-func (db *DB) GetAllUser() ([]models.User, error) {
+func (db *UserService) GetAllUser() ([]models.User, error) {
 	allUsers := []models.User{}
 
-	collection := db.Client.Database(lib.DatabaseName).Collection("user")
+	collection := db.conn.GetCollection("")
 
 	filter := bson.D{}
 
@@ -60,4 +67,16 @@ func (db *DB) GetAllUser() ([]models.User, error) {
 	}
 
 	return allUsers, nil
+}
+
+func (db *UserService) CreateUser(user models.User, collectionName string) error {
+	collection := db.conn.GetCollection(collectionName)
+
+	_, err := collection.InsertOne(context.TODO(), user)
+	if err != nil {
+		log.Println("error user insert: ", err.Error())
+		return err
+	}
+
+	return nil
 }

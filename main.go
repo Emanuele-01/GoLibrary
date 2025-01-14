@@ -1,20 +1,22 @@
 package main
 
 import (
-	"fmt"
+	"log"
 
 	"github.com/gin-gonic/gin"
+	"library.net/module/config"
 	"library.net/module/lib"
 	"library.net/module/route"
-	"library.net/module/services"
 )
 
 func main() {
 	r := gin.Default()
 
-	_, err := services.ConnectServiceMongo(lib.UriMongo)
-	if err != nil {
-		fmt.Println("Connection Mongo error: ", err.Error())
+	mongo := config.NewDatabase(lib.DatabaseName, lib.UriMongo)
+
+	errMGD := mongo.ConnectMDB(10, 50, 10)
+	if errMGD != nil {
+		log.Fatal("error connect database: ", errMGD.Error())
 	}
 
 	route.SetupRoute(r)
