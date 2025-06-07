@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 
 	"github.com/gin-gonic/gin"
@@ -21,5 +22,5 @@ func main() {
 
 	route.SetupRoute(r)
 
-	r.Run(":8080")
+	log.Fatal(r.Run(fmt.Sprintf(":%d", config.Port)))
 }

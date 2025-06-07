@@ -11,7 +11,10 @@ import (
 	"library.net/module/lib"
 )
 
-var App *services
+var (
+	App  *services
+	Port = 5001
+)
 
 type services struct {
 	D *DATABASE
